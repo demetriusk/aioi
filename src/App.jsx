@@ -408,7 +408,7 @@ const AnimatedLogoText = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % LOGO_VARIATIONS.length);
-    }, 500);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
