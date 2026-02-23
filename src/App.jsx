@@ -486,7 +486,7 @@ export default function App() {
         {/* Header */}
         <header className="text-center mb-8">
           <h1 className="text-2xl md:text-3xl font-extrabold mb-2">
-            ИИ и Занятость
+            ИИ и рынок труда в России
           </h1>
           <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto">
             Замещение труда или его трансформация?<br />Узнайте, как ИИ повлияет на вашу будущую профессию
