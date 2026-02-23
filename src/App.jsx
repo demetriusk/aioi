@@ -12,6 +12,8 @@ import {
   Users,
   ShieldAlert,
   ShieldCheck,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -267,7 +269,7 @@ const ProfessionCard = ({ profession, onClick }) => {
   );
 };
 
-const ProfessionModal = ({ profession, open, onClose }) => {
+const ProfessionModal = ({ profession, open, onClose, onPrev, onNext, hasPrev, hasNext }) => {
   if (!profession) return null;
 
   const risk = getRiskLevel(profession.risk);
@@ -275,11 +277,35 @@ const ProfessionModal = ({ profession, open, onClose }) => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent style={{ borderColor: colors.border }}>
+      <DialogContent style={{ borderColor: colors.border }} className="relative">
         <DialogHeader>
           <DialogTitle>{profession.name}</DialogTitle>
           <DialogDescription>{profession.cat}</DialogDescription>
         </DialogHeader>
+
+        {/* Navigation arrows */}
+        <div className="flex justify-between items-center mb-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onPrev}
+            disabled={!hasPrev}
+            className="flex items-center gap-1"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Назад
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onNext}
+            disabled={!hasNext}
+            className="flex items-center gap-1"
+          >
+            Вперёд
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
 
         <div className="space-y-4">
           {/* Risk meter */}
@@ -372,7 +398,7 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Все");
   const [sort, setSort] = useState("risk-desc");
-  const [selectedProfession, setSelectedProfession] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(null);
 
   const filtered = useMemo(() => {
     let result = PROFESSIONS.filter(p =>
@@ -454,7 +480,7 @@ export default function App() {
             <ProfessionCard
               key={i}
               profession={p}
-              onClick={() => setSelectedProfession(p)}
+              onClick={() => setSelectedIndex(i)}
             />
           ))}
         </div>
@@ -478,9 +504,13 @@ export default function App() {
       </div>
 
       <ProfessionModal
-        profession={selectedProfession}
-        open={!!selectedProfession}
-        onClose={() => setSelectedProfession(null)}
+        profession={selectedIndex !== null ? filtered[selectedIndex] : null}
+        open={selectedIndex !== null}
+        onClose={() => setSelectedIndex(null)}
+        onPrev={() => setSelectedIndex(i => i > 0 ? i - 1 : i)}
+        onNext={() => setSelectedIndex(i => i < filtered.length - 1 ? i + 1 : i)}
+        hasPrev={selectedIndex > 0}
+        hasNext={selectedIndex !== null && selectedIndex < filtered.length - 1}
       />
     </div>
   );
