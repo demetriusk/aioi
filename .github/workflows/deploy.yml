@@ -28,4 +28,3 @@ jobs:
           username: ${{ secrets.BEGET_FTP_USER }}
           password: ${{ secrets.BEGET_FTP_PASSWORD }}
           local-dir: ./dist/
-          server-dir: ./
