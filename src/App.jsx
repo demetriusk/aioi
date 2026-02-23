@@ -1,4 +1,37 @@
 import { useState, useMemo } from "react";
+import {
+  Bot,
+  Search,
+  TrendingUp,
+  RefreshCcw,
+  AlertTriangle,
+  Lightbulb,
+  Link2,
+  ArrowUpDown,
+  BarChart3,
+  Users,
+  ShieldAlert,
+  ShieldCheck,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const CATEGORIES = [
   "Все", "IT и технологии", "Финансы", "Медицина", "Образование",
@@ -172,108 +205,141 @@ const PROFESSIONS = [
     src: [{ t: "Яндекс: Нейросетевой перевод", u: "https://translate.yandex.ru" }] },
 ];
 
-const getRiskColor = (r) => {
-  if (r <= 25) return { bg: "rgba(16,185,129,0.15)", border: "#10b981", text: "#6ee7b7", label: "Низкий" };
-  if (r <= 50) return { bg: "rgba(250,204,21,0.15)", border: "#facc15", text: "#fde68a", label: "Средний" };
-  if (r <= 75) return { bg: "rgba(251,146,60,0.15)", border: "#fb923c", text: "#fdba74", label: "Высокий" };
-  return { bg: "rgba(239,68,68,0.15)", border: "#ef4444", text: "#fca5a5", label: "Критический" };
+const getRiskLevel = (r) => {
+  if (r <= 25) return { variant: "low", label: "Низкий" };
+  if (r <= 50) return { variant: "medium", label: "Средний" };
+  if (r <= 75) return { variant: "high", label: "Высокий" };
+  return { variant: "critical", label: "Критический" };
 };
 
-const getTrendIcon = (t) => {
-  if (t === "рост") return "📈";
-  if (t === "трансформация") return "🔄";
-  return "⚠️";
+const getRiskColors = (r) => {
+  if (r <= 25) return { border: "#10b981", gradient: "from-emerald-500 to-emerald-300" };
+  if (r <= 50) return { border: "#facc15", gradient: "from-yellow-500 to-yellow-300" };
+  if (r <= 75) return { border: "#fb923c", gradient: "from-orange-500 to-orange-300" };
+  return { border: "#ef4444", gradient: "from-red-500 to-red-300" };
+};
+
+const TrendIcon = ({ trend, className }) => {
+  if (trend === "рост") return <TrendingUp className={cn("h-4 w-4", className)} />;
+  if (trend === "трансформация") return <RefreshCcw className={cn("h-4 w-4", className)} />;
+  return <AlertTriangle className={cn("h-4 w-4", className)} />;
 };
 
 const RiskBar = ({ value }) => {
-  const c = getRiskColor(value);
+  const colors = getRiskColors(value);
   return (
-    <div style={{ width: "100%", background: "rgba(255,255,255,0.05)", borderRadius: 8, height: 10, overflow: "hidden" }}>
-      <div style={{ width: `${value}%`, height: "100%", background: `linear-gradient(90deg, ${c.border}, ${c.text})`, borderRadius: 8, transition: "width 0.6s ease" }} />
+    <div className="w-full h-2.5 bg-white/5 rounded-full overflow-hidden">
+      <div
+        className={cn("h-full rounded-full bg-gradient-to-r transition-all duration-500", colors.gradient)}
+        style={{ width: `${value}%` }}
+      />
     </div>
   );
 };
 
-const Card = ({ p, onClick }) => {
-  const c = getRiskColor(p.risk);
+const ProfessionCard = ({ profession, onClick }) => {
+  const risk = getRiskLevel(profession.risk);
+  const colors = getRiskColors(profession.risk);
+
   return (
-    <div onClick={onClick} style={{
-      background: "rgba(255,255,255,0.03)", border: `1px solid rgba(255,255,255,0.08)`,
-      borderRadius: 16, padding: "20px", cursor: "pointer",
-      transition: "all 0.3s ease", position: "relative", overflow: "hidden"
-    }}
-    onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.07)"; e.currentTarget.style.borderColor = c.border; e.currentTarget.style.transform = "translateY(-2px)"; }}
-    onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.transform = "translateY(0)"; }}
+    <Card
+      className="p-5 cursor-pointer hover:bg-card-hover hover:-translate-y-0.5 hover:shadow-lg group"
+      style={{ borderColor: "rgba(255,255,255,0.08)" }}
+      onClick={onClick}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = colors.border; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-        <h3 style={{ color: "#f1f5f9", fontSize: 17, fontWeight: 600, margin: 0, flex: 1 }}>{p.name}</h3>
-        <span style={{ background: c.bg, color: c.text, border: `1px solid ${c.border}`, borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 600, whiteSpace: "nowrap", marginLeft: 8 }}>
-          {p.risk}%
-        </span>
+      <div className="flex justify-between items-start gap-2 mb-3">
+        <h3 className="font-semibold text-foreground text-base leading-tight">{profession.name}</h3>
+        <Badge variant={risk.variant} className="shrink-0">
+          {profession.risk}%
+        </Badge>
       </div>
-      <RiskBar value={p.risk} />
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 10 }}>
-        <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 12 }}>{p.cat}</span>
-        <span style={{ fontSize: 13, color: c.text }}>{getTrendIcon(p.trend)} {p.trend}</span>
+      <RiskBar value={profession.risk} />
+      <div className="flex justify-between items-center mt-3 flex-wrap gap-2">
+        <span className="text-xs text-muted">{profession.cat}</span>
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <TrendIcon trend={profession.trend} />
+          <span>{profession.trend}</span>
+        </div>
       </div>
-    </div>
+    </Card>
   );
 };
 
-const Modal = ({ p, onClose }) => {
-  if (!p) return null;
-  const c = getRiskColor(p.risk);
+const ProfessionModal = ({ profession, open, onClose }) => {
+  if (!profession) return null;
+
+  const risk = getRiskLevel(profession.risk);
+  const colors = getRiskColors(profession.risk);
+
   return (
-    <div onClick={onClose} style={{
-      position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)",
-      display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 20
-    }}>
-      <div onClick={e => e.stopPropagation()} style={{
-        background: "#1a1a2e", border: `1px solid ${c.border}`, borderRadius: 20,
-        padding: 32, maxWidth: 560, width: "100%", maxHeight: "85vh", overflowY: "auto", position: "relative"
-      }}>
-        <button onClick={onClose} style={{
-          position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,0.1)",
-          border: "none", color: "#fff", width: 32, height: 32, borderRadius: 8, cursor: "pointer", fontSize: 16
-        }}>✕</button>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-          <h2 style={{ color: "#f1f5f9", fontSize: 22, fontWeight: 700, margin: 0 }}>{p.name}</h2>
-        </div>
-        <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>{p.cat}</span>
-        <div style={{ margin: "20px 0" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-            <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 13 }}>Риск автоматизации</span>
-            <span style={{ color: c.text, fontWeight: 700, fontSize: 20 }}>{p.risk}%</span>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent style={{ borderColor: colors.border }}>
+        <DialogHeader>
+          <DialogTitle>{profession.name}</DialogTitle>
+          <DialogDescription>{profession.cat}</DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          {/* Risk meter */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-muted-foreground">Риск автоматизации</span>
+              <span className="text-2xl font-bold" style={{ color: colors.border }}>
+                {profession.risk}%
+              </span>
+            </div>
+            <RiskBar value={profession.risk} />
+            <div className="flex gap-2 mt-3 flex-wrap">
+              <Badge variant={risk.variant}>{risk.label} риск</Badge>
+              <Badge variant="outline" className="flex items-center gap-1.5">
+                <TrendIcon trend={profession.trend} className="h-3 w-3" />
+                {profession.trend}
+              </Badge>
+            </div>
           </div>
-          <RiskBar value={p.risk} />
-          <div style={{ display: "flex", gap: 12, marginTop: 10 }}>
-            <span style={{ background: c.bg, color: c.text, border: `1px solid ${c.border}`, borderRadius: 20, padding: "4px 14px", fontSize: 13 }}>
-              {c.label} риск
-            </span>
-            <span style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.7)", borderRadius: 20, padding: "4px 14px", fontSize: 13 }}>
-              {getTrendIcon(p.trend)} {p.trend}
-            </span>
+
+          {/* Analysis */}
+          <div className="bg-white/[0.03] rounded-xl p-4">
+            <h4 className="text-xs uppercase tracking-wider text-muted mb-2 font-medium">
+              Анализ влияния ИИ
+            </h4>
+            <p className="text-sm text-foreground/80 leading-relaxed">{profession.desc}</p>
+          </div>
+
+          {/* Skills */}
+          <div className="bg-emerald-500/5 border border-emerald-500/15 rounded-xl p-4">
+            <h4 className="text-xs uppercase tracking-wider text-emerald-400 mb-2 font-medium flex items-center gap-2">
+              <Lightbulb className="h-4 w-4" />
+              Навыки будущего
+            </h4>
+            <p className="text-sm text-foreground/80 leading-relaxed">{profession.skills}</p>
+          </div>
+
+          {/* Sources */}
+          <div>
+            <h4 className="text-xs uppercase tracking-wider text-muted mb-2 font-medium flex items-center gap-2">
+              <Link2 className="h-4 w-4" />
+              Источники
+            </h4>
+            <div className="space-y-1">
+              {profession.src.map((s, i) => (
+                <a
+                  key={i}
+                  href={s.u}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block text-sm text-primary hover:text-primary-foreground py-1.5 border-b border-white/5 last:border-0 transition-colors"
+                >
+                  {s.t}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
-        <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 16, marginBottom: 16 }}>
-          <h4 style={{ color: "rgba(255,255,255,0.5)", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, margin: "0 0 8px" }}>Анализ влияния ИИ</h4>
-          <p style={{ color: "rgba(255,255,255,0.8)", fontSize: 14, lineHeight: 1.7, margin: 0 }}>{p.desc}</p>
-        </div>
-        <div style={{ background: "rgba(16,185,129,0.05)", borderRadius: 12, padding: 16, marginBottom: 16, border: "1px solid rgba(16,185,129,0.15)" }}>
-          <h4 style={{ color: "#6ee7b7", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, margin: "0 0 8px" }}>💡 Навыки будущего</h4>
-          <p style={{ color: "rgba(255,255,255,0.8)", fontSize: 14, lineHeight: 1.6, margin: 0 }}>{p.skills}</p>
-        </div>
-        <div>
-          <h4 style={{ color: "rgba(255,255,255,0.5)", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, margin: "0 0 10px" }}>📎 Источники</h4>
-          {p.src.map((s, i) => (
-            <a key={i} href={s.u} target="_blank" rel="noreferrer" style={{
-              display: "block", color: "#818cf8", fontSize: 13, textDecoration: "none",
-              padding: "6px 0", borderBottom: i < p.src.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none"
-            }}>{s.t} ↗</a>
-          ))}
-        </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -281,128 +347,141 @@ const Stats = ({ data }) => {
   const avg = Math.round(data.reduce((a, p) => a + p.risk, 0) / data.length);
   const hi = data.filter(p => p.risk > 65).length;
   const lo = data.filter(p => p.risk <= 25).length;
+
   const items = [
-    { label: "Профессий в каталоге", val: data.length, col: "#818cf8" },
-    { label: "Средний риск", val: avg + "%", col: getRiskColor(avg).text },
-    { label: "Под высоким риском", val: hi, col: "#fca5a5" },
-    { label: "Устойчивы к ИИ", val: lo, col: "#6ee7b7" },
+    { label: "Профессий в каталоге", val: data.length, icon: Users, color: "text-primary" },
+    { label: "Средний риск", val: avg + "%", icon: BarChart3, color: getRiskLevel(avg).variant === "low" ? "text-risk-low-text" : getRiskLevel(avg).variant === "medium" ? "text-risk-medium-text" : "text-risk-high-text" },
+    { label: "Под высоким риском", val: hi, icon: ShieldAlert, color: "text-risk-critical-text" },
+    { label: "Устойчивы к ИИ", val: lo, icon: ShieldCheck, color: "text-risk-low-text" },
   ];
+
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 24 }}>
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
       {items.map((it, i) => (
-        <div key={i} style={{ background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: "14px 16px", textAlign: "center" }}>
-          <div style={{ color: it.col, fontSize: 26, fontWeight: 700 }}>{it.val}</div>
-          <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, marginTop: 2 }}>{it.label}</div>
-        </div>
+        <Card key={i} className="p-4 text-center">
+          <it.icon className={cn("h-5 w-5 mx-auto mb-2 opacity-60", it.color)} />
+          <div className={cn("text-2xl font-bold", it.color)}>{it.val}</div>
+          <div className="text-[10px] text-muted mt-1">{it.label}</div>
+        </Card>
       ))}
     </div>
   );
 };
 
 export default function App() {
-  const [q, setQ] = useState("");
-  const [cat, setCat] = useState("Все");
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("Все");
   const [sort, setSort] = useState("risk-desc");
-  const [sel, setSel] = useState(null);
+  const [selectedProfession, setSelectedProfession] = useState(null);
 
   const filtered = useMemo(() => {
-    let r = PROFESSIONS.filter(p =>
-      (cat === "Все" || p.cat === cat) &&
-      (q === "" || p.name.toLowerCase().includes(q.toLowerCase()))
+    let result = PROFESSIONS.filter(p =>
+      (category === "Все" || p.cat === category) &&
+      (query === "" || p.name.toLowerCase().includes(query.toLowerCase()))
     );
-    if (sort === "risk-desc") r.sort((a, b) => b.risk - a.risk);
-    else if (sort === "risk-asc") r.sort((a, b) => a.risk - b.risk);
-    else r.sort((a, b) => a.name.localeCompare(b.name, "ru"));
-    return r;
-  }, [q, cat, sort]);
+    if (sort === "risk-desc") result.sort((a, b) => b.risk - a.risk);
+    else if (sort === "risk-asc") result.sort((a, b) => a.risk - b.risk);
+    else result.sort((a, b) => a.name.localeCompare(b.name, "ru"));
+    return result;
+  }, [query, category, sort]);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0f0f1a", color: "#f1f5f9", fontFamily: "'Inter', -apple-system, sans-serif" }}>
-      <div style={{ maxWidth: 960, margin: "0 auto", padding: "32px 20px" }}>
+    <div className="min-h-screen w-full bg-background text-foreground">
+      <div className="w-full max-w-7xl mx-auto px-4 py-8 md:px-8 lg:px-12 md:py-10">
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ fontSize: 13, color: "#818cf8", fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>
-            🤖 Школьный проект · 10 класс
+        <header className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 text-xs text-primary font-semibold tracking-wider uppercase mb-3">
+            <Bot className="h-4 w-4" />
+            Школьный проект · 10 класс
           </div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, margin: "0 0 8px",
-            background: "linear-gradient(135deg, #818cf8, #c084fc, #f472b6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+          <h1 className="text-2xl md:text-3xl font-extrabold mb-2 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             ИИ и Занятость
           </h1>
-          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 15, margin: 0, maxWidth: 500, marginLeft: "auto", marginRight: "auto" }}>
+          <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto">
             Замещение труда или его трансформация? Узнайте, как ИИ повлияет на вашу будущую профессию
           </p>
-        </div>
+        </header>
 
         <Stats data={PROFESSIONS} />
 
         {/* Search */}
-        <div style={{ position: "relative", marginBottom: 16 }}>
-          <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", fontSize: 18, opacity: 0.4 }}>🔍</span>
-          <input
-            value={q} onChange={e => setQ(e.target.value)}
+        <div className="relative mb-4">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder="Найти профессию..."
-            style={{
-              width: "100%", padding: "14px 16px 14px 48px", background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, color: "#f1f5f9",
-              fontSize: 15, outline: "none", boxSizing: "border-box"
-            }}
-            onFocus={e => e.target.style.borderColor = "#818cf8"}
-            onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.1)"}
+            className="pl-11"
           />
         </div>
 
         {/* Categories */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+        <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-none">
           {CATEGORIES.map(c => (
-            <button key={c} onClick={() => setCat(c)} style={{
-              padding: "7px 14px", borderRadius: 20, fontSize: 12, cursor: "pointer", border: "1px solid",
-              fontWeight: 500, transition: "all 0.2s",
-              background: cat === c ? "rgba(129,140,248,0.2)" : "rgba(255,255,255,0.03)",
-              borderColor: cat === c ? "#818cf8" : "rgba(255,255,255,0.08)",
-              color: cat === c ? "#a5b4fc" : "rgba(255,255,255,0.5)"
-            }}>{c}</button>
+            <Button
+              key={c}
+              variant={category === c ? "default" : "secondary"}
+              size="sm"
+              onClick={() => setCategory(c)}
+              className="shrink-0"
+            >
+              {c}
+            </Button>
           ))}
         </div>
 
-        {/* Sort + count */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>
+        {/* Controls */}
+        <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+          <span className="text-sm text-muted">
             {filtered.length === 0 ? "Ничего не найдено" : `Найдено: ${filtered.length}`}
           </span>
-          <select value={sort} onChange={e => setSort(e.target.value)} style={{
-            background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
-            borderRadius: 10, color: "rgba(255,255,255,0.6)", padding: "6px 12px", fontSize: 12, cursor: "pointer"
-          }}>
-            <option value="risk-desc">Риск: высокий → низкий</option>
-            <option value="risk-asc">Риск: низкий → высокий</option>
-            <option value="alpha">По алфавиту</option>
-          </select>
+          <Select value={sort} onValueChange={setSort}>
+            <SelectTrigger className="w-auto">
+              <ArrowUpDown className="h-4 w-4 mr-2 opacity-50" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="risk-desc">Риск: высокий → низкий</SelectItem>
+              <SelectItem value="risk-asc">Риск: низкий → высокий</SelectItem>
+              <SelectItem value="alpha">По алфавиту</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 14 }}>
-          {filtered.map((p, i) => <Card key={i} p={p} onClick={() => setSel(p)} />)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {filtered.map((p, i) => (
+            <ProfessionCard
+              key={i}
+              profession={p}
+              onClick={() => setSelectedProfession(p)}
+            />
+          ))}
         </div>
 
         {filtered.length === 0 && (
-          <div style={{ textAlign: "center", padding: 60, color: "rgba(255,255,255,0.3)" }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>🔍</div>
+          <div className="text-center py-16 text-muted">
+            <Search className="h-12 w-12 mx-auto mb-4 opacity-30" />
             <p>Профессия не найдена. Попробуйте изменить запрос.</p>
           </div>
         )}
 
         {/* Footer */}
-        <div style={{ textAlign: "center", marginTop: 48, padding: "24px 0", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-          <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, margin: 0 }}>
-            Индивидуальный проект · 10 класс · 2024–2025
+        <footer className="text-center mt-12 pt-6 border-t border-border">
+          <p className="text-xs text-muted">
+            Индивидуальный проект · 10 класс · 2024-2025
           </p>
-          <p style={{ color: "rgba(255,255,255,0.2)", fontSize: 11, margin: "4px 0 0" }}>
+          <p className="text-[10px] text-muted/60 mt-1">
             Данные основаны на анализе открытых источников. Оценки носят ориентировочный характер.
           </p>
-        </div>
+        </footer>
       </div>
 
-      <Modal p={sel} onClose={() => setSel(null)} />
+      <ProfessionModal
+        profession={selectedProfession}
+        open={!!selectedProfession}
+        onClose={() => setSelectedProfession(null)}
+      />
     </div>
   );
 }
