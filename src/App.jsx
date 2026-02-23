@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import {
-  Bot,
   Search,
   TrendingUp,
   RefreshCcw,
@@ -414,13 +413,17 @@ export default function App() {
 
   return (
     <div className="min-h-screen w-full bg-background text-foreground">
+      {/* Logo */}
+      <div className="w-full max-w-7xl mx-auto px-4 pt-4 md:px-8 lg:px-12">
+        <div className="flex items-center gap-2">
+          <img src="/logo.svg" alt="АйОй" style={{ maxHeight: 42 }} />
+          <span className="text-lg font-bold text-foreground">АйОй</span>
+        </div>
+      </div>
+
       <div className="w-full max-w-7xl mx-auto px-4 py-8 md:px-8 lg:px-12 md:py-10">
         {/* Header */}
         <header className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 text-xs text-primary font-semibold tracking-wider uppercase mb-3">
-            <Bot className="h-4 w-4" />
-            AiOi &middot; АйОй
-          </div>
           <h1 className="text-2xl md:text-3xl font-extrabold mb-2 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             ИИ и Занятость
           </h1>
