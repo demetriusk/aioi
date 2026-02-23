@@ -283,30 +283,6 @@ const ProfessionModal = ({ profession, open, onClose, onPrev, onNext, hasPrev, h
           <DialogDescription>{profession.cat}</DialogDescription>
         </DialogHeader>
 
-        {/* Navigation arrows */}
-        <div className="flex justify-between items-center mb-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onPrev}
-            disabled={!hasPrev}
-            className="flex items-center gap-1"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Назад
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onNext}
-            disabled={!hasNext}
-            className="flex items-center gap-1"
-          >
-            Вперёд
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-
         <div className="space-y-4">
           {/* Risk meter */}
           <div>
@@ -365,6 +341,30 @@ const ProfessionModal = ({ profession, open, onClose, onPrev, onNext, hasPrev, h
           </div>
         </div>
       </DialogContent>
+
+      {/* Navigation arrows - outside dialog frame */}
+      <div className="fixed left-1/2 -translate-x-1/2 bottom-4 sm:bottom-8 flex items-center gap-4 z-50">
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={onPrev}
+          disabled={!hasPrev}
+          className="flex items-center gap-1 bg-background/80 backdrop-blur-sm"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          Назад
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={onNext}
+          disabled={!hasNext}
+          className="flex items-center gap-1 bg-background/80 backdrop-blur-sm"
+        >
+          Вперёд
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
     </Dialog>
   );
 };
