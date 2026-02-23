@@ -424,11 +424,11 @@ export default function App() {
       <div className="w-full max-w-7xl mx-auto px-4 py-8 md:px-8 lg:px-12 md:py-10">
         {/* Header */}
         <header className="text-center mb-8">
-          <h1 className="text-2xl md:text-3xl font-extrabold mb-2 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h1 className="text-2xl md:text-3xl font-extrabold mb-2">
             ИИ и Занятость
           </h1>
           <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto">
-            Замещение труда или его трансформация? Узнайте, как ИИ повлияет на вашу будущую профессию
+            Замещение труда или его трансформация?<br />Узнайте, как ИИ повлияет на вашу будущую профессию
           </p>
         </header>
 
