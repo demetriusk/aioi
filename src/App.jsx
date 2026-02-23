@@ -277,7 +277,7 @@ const ProfessionModal = ({ profession, open, onClose, onPrev, onNext, hasPrev, h
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent style={{ borderColor: colors.border }} className="relative">
+      <DialogContent style={{ borderColor: colors.border }}>
         <DialogHeader>
           <DialogTitle>{profession.name}</DialogTitle>
           <DialogDescription>{profession.cat}</DialogDescription>
