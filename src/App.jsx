@@ -276,7 +276,6 @@ const ProfessionModal = ({ profession, open, onClose, onPrev, onNext, hasPrev, h
   const colors = getRiskColors(profession.risk);
 
   return (
-    <>
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent style={{ borderColor: colors.border }}>
         <DialogHeader>
@@ -341,36 +340,33 @@ const ProfessionModal = ({ profession, open, onClose, onPrev, onNext, hasPrev, h
             </div>
           </div>
         </div>
+
+        {/* Navigation panel */}
+        <div className="flex justify-between items-center pt-4 mt-4 border-t border-white/10">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onPrev}
+            disabled={!hasPrev}
+            className="flex items-center gap-1"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Назад
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onNext}
+            disabled={!hasNext}
+            className="flex items-center gap-1"
+          >
+            Вперёд
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
 
-    {/* Navigation arrows - outside dialog frame */}
-    <div
-      className="fixed left-1/2 -translate-x-1/2 bottom-4 sm:bottom-8 flex items-center gap-4 z-[100]"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <Button
-        variant="secondary"
-        size="sm"
-        onClick={(e) => { e.stopPropagation(); onPrev(); }}
-        disabled={!hasPrev}
-        className="flex items-center gap-1 bg-background/90 backdrop-blur-sm shadow-lg"
-      >
-        <ChevronLeft className="h-4 w-4" />
-        Назад
-      </Button>
-      <Button
-        variant="secondary"
-        size="sm"
-        onClick={(e) => { e.stopPropagation(); onNext(); }}
-        disabled={!hasNext}
-        className="flex items-center gap-1 bg-background/90 backdrop-blur-sm shadow-lg"
-      >
-        Вперёд
-        <ChevronRight className="h-4 w-4" />
-      </Button>
-    </div>
-  </>
   );
 };
 
