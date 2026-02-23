@@ -402,20 +402,59 @@ for (let ai = 1; ai <= 3; ai++) {
   }
 }
 
-const AnimatedLogoText = () => {
-  const [index, setIndex] = useState(0);
+// 10 vibrant colors well-contrasted on dark background
+const LOGO_COLORS = [
+  "#ffffff", // white (default)
+  "#f472b6", // pink
+  "#a78bfa", // violet
+  "#60a5fa", // blue
+  "#34d399", // emerald
+  "#fbbf24", // amber
+  "#fb923c", // orange
+  "#f87171", // red
+  "#2dd4bf", // teal
+  "#c084fc", // purple
+];
+
+const AnimatedLogo = () => {
+  const [textIndex, setTextIndex] = useState(0);
+  const [colorIndex, setColorIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % LOGO_VARIATIONS.length);
+      setTextIndex((prev) => (prev + 1) % LOGO_VARIATIONS.length);
     }, 3000);
     return () => clearInterval(interval);
   }, []);
 
+  const handleHover = () => {
+    setColorIndex((prev) => (prev + 1) % LOGO_COLORS.length);
+  };
+
+  const currentColor = LOGO_COLORS[colorIndex];
+
   return (
-    <span className="text-lg font-bold text-foreground inline-block min-w-[120px]">
-      {LOGO_VARIATIONS[index]}
-    </span>
+    <div
+      className="flex items-center gap-2 cursor-pointer transition-all duration-300"
+      onMouseEnter={handleHover}
+    >
+      <div
+        style={{
+          width: 42,
+          height: 42,
+          backgroundColor: currentColor,
+          mask: "url(/logo.svg) no-repeat center / contain",
+          WebkitMask: "url(/logo.svg) no-repeat center / contain",
+          transition: "background-color 0.3s ease",
+        }}
+      />
+      <span
+        className="text-lg font-bold inline-block min-w-[120px] transition-colors duration-300"
+        style={{ color: currentColor }}
+      >
+        {LOGO_VARIATIONS[textIndex]}
+      </span>
+    </div>
   );
 };
 
@@ -440,10 +479,7 @@ export default function App() {
     <div className="min-h-screen w-full bg-background text-foreground">
       {/* Logo */}
       <div className="w-full max-w-7xl mx-auto px-4 pt-4 md:px-8 lg:px-12">
-        <div className="flex items-center gap-2">
-          <img src="/logo.svg" alt="АйОй" style={{ maxHeight: 42 }} />
-          <AnimatedLogoText />
-        </div>
+        <AnimatedLogo />
       </div>
 
       <div className="w-full max-w-7xl mx-auto px-4 py-8 md:px-8 lg:px-12 md:py-10">
