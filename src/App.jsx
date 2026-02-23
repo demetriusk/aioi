@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Search,
   TrendingUp,
@@ -394,6 +394,31 @@ const Stats = ({ data }) => {
   );
 };
 
+// Generate all variations: 1-3 "Ай" + 1-3 "Ой"
+const LOGO_VARIATIONS = [];
+for (let ai = 1; ai <= 3; ai++) {
+  for (let oi = 1; oi <= 3; oi++) {
+    LOGO_VARIATIONS.push("Ай".repeat(ai) + "Ой".repeat(oi));
+  }
+}
+
+const AnimatedLogoText = () => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % LOGO_VARIATIONS.length);
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <span className="text-lg font-bold text-foreground inline-block min-w-[120px]">
+      {LOGO_VARIATIONS[index]}
+    </span>
+  );
+};
+
 export default function App() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Все");
@@ -417,7 +442,7 @@ export default function App() {
       <div className="w-full max-w-7xl mx-auto px-4 pt-4 md:px-8 lg:px-12">
         <div className="flex items-center gap-2">
           <img src="/logo.svg" alt="АйОй" style={{ maxHeight: 42 }} />
-          <span className="text-lg font-bold text-foreground">АйОй</span>
+          <AnimatedLogoText />
         </div>
       </div>
 
