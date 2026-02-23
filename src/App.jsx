@@ -392,7 +392,7 @@ export default function App() {
         <header className="text-center mb-8">
           <div className="inline-flex items-center gap-2 text-xs text-primary font-semibold tracking-wider uppercase mb-3">
             <Bot className="h-4 w-4" />
-            Школьный проект · 10 класс
+            AiOi &middot; АйОй
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold mb-2 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             ИИ и Занятость
@@ -469,7 +469,7 @@ export default function App() {
         {/* Footer */}
         <footer className="text-center mt-12 pt-6 border-t border-border">
           <p className="text-xs text-muted">
-            Индивидуальный проект · 10 класс · 2024-2025
+            &copy; Марк Коротков · 2026
           </p>
           <p className="text-[10px] text-muted/60 mt-1">
             Данные основаны на анализе открытых источников. Оценки носят ориентировочный характер.
