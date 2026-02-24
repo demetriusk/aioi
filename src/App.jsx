@@ -16,6 +16,7 @@ import {
   Clock,
   ArrowRight,
   ExternalLink,
+  Cpu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -513,7 +514,7 @@ const TaskBreakdown = ({ tasks }) => {
       {/* Automated tasks */}
       <div className="mb-3">
         <div className="flex items-center gap-2 text-sm text-red-400 mb-2">
-          <span>✅</span>
+          <Cpu className="h-4 w-4" />
           <span className="font-medium">Автоматизируется</span>
         </div>
         <ul className="space-y-1 pl-6">
@@ -526,7 +527,7 @@ const TaskBreakdown = ({ tasks }) => {
       {/* Human tasks */}
       <div>
         <div className="flex items-center gap-2 text-sm text-emerald-400 mb-2">
-          <span>🛡️</span>
+          <ShieldCheck className="h-4 w-4" />
           <span className="font-medium">Остаётся за человеком</span>
         </div>
         <ul className="space-y-1 pl-6">
