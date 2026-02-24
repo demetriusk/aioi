@@ -369,7 +369,7 @@ const PROFESSIONS = [
     transitions: ["cnc-operator", "logist"],
     related: ["cnc-operator", "warehouse-worker"] },
   { id: "warehouse-worker", name: "Кладовщик", cat: "Производство", risk: 80, trend: "замещение",
-    desc: "Автоматизированные склады (Amazon, Ozon, Wildberries) массово внедряют роботов. Профессия под высоким риском.",
+    desc: "Автоматизированные склады (Ozon, Wildberries, Яндекс Маркет, AliExpress) массово внедряют роботов. Профессия под высоким риском.",
     skills: "Переквалификация: управление складской робототехникой",
     src: [{ t: "TAdviser: Складские роботы в Wildberries", u: "https://www.tadviser.ru/index.php/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82:%D0%A1%D0%BA%D0%BB%D0%B0%D0%B4%D1%81%D0%BA%D0%B8%D0%B5_%D1%80%D0%BE%D0%B1%D0%BE%D1%82%D1%8B_%D0%B2_Wildberries" }, { t: "Shoppers: Автоматизация позволила Wildberries вдвое сократить наём", u: "https://shoppers.media/news/21951_avtomatizaciia-skladov-pozvolila-wildberries-vdvoe-sokratit-naem-rabocix" }, { t: "InteKey: ИИ в складской логистике", u: "https://intekey.ru/articles/iskusstvennyy-intellekt-v-skladskoy-logistike-globalnye-trendy-i-rossiyskaya-realnost" }, { t: "OSN: ИИ в ближайшие 20 лет заменит кассиров, бухгалтеров и водителей такси", u: "https://www.osnmedia.ru/obshhestvo/kladov-ii-v-blizhajshie-20-let-zamenit-kassirov-buhgalterov-i-voditelej-taksi" }, { t: "ITOB: Применение ИИ в логистике: Кейсы российских компаний", u: "https://itob.ru/blog/primenenie-iskusstvennogo-intellekta-v-rossiyskoy-logistike" }],
     tasks: {
